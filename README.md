@@ -45,15 +45,22 @@ end
 You can add a check constraint in your migration:
 
 ```ruby
-add_check :products, 'price > 0', :name => 'products_price_check'
+add_check :products, 'price > 0', :name => 'price_check'
 ```
 
-**NOTE**: `:name` option is mandatory now.
+The code above generates following SQL:
+
+```sql
+ALTER TABLE "products" ADD CONSTRAINT "products_price_check" (price > 0)
+```
+
+**NOTE**: `:name` option is mandatory now. Also note that table name auto-included
+to constraint name.
 
 To remove constraint use `remove_check` method:
 
 ```ruby
-remove_check :products, :name => 'products_price_check'
+remove_check :products, :name => 'price_check'
 ```
 
 ## Change Table methods
@@ -63,7 +70,7 @@ This gem adds extra methods to `create_table` and `change_table`:
 ```ruby
 create_table :products do |t|
   t.decimal :price, :null => false
-  t.check 'price > 0', :name => 'products_price_check'
+  t.check 'price > 0', :name => 'price_check'
 end
 ```
 
@@ -71,7 +78,7 @@ Remove a check constraint:
 
 ```ruby
 change_table :products do |t|
-  t.remove_check :name => 'products_price_check'
+  t.remove_check :name => 'price_check'
 end
 ```
 
