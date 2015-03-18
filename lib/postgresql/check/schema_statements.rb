@@ -27,7 +27,7 @@ module Postgresql
         name = options.fetch(:name) { raise 'add_check, :name option required' }
 
         sql = "ALTER TABLE #{quote_table_name(table_name)} " +
-            "ADD CONSTRAINT #{quote_column_name("#{table_name}_#{name}")} " +
+            "ADD CONSTRAINT #{quote_column_name(name)} " +
             "CHECK (#{condition})"
 
         execute(sql)
@@ -49,7 +49,7 @@ module Postgresql
         name = options.fetch(:name) { raise 'remove_check, :name option required' }
 
         sql = "ALTER TABLE #{quote_table_name(table_name)} " +
-            "DROP CONSTRAINT #{quote_column_name("#{table_name}_#{name}")}"
+            "DROP CONSTRAINT #{quote_column_name(name)}"
 
         execute(sql)
       end
