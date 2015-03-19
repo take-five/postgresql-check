@@ -2,7 +2,7 @@ module Postgresql
   module Check
     module SchemaDefinitions
       def self.included(base)
-        if ActiveRecord::VERSION::STRING > "4.2"
+        if ActiveRecord::VERSION::STRING > '4.2'
           ActiveRecord::ConnectionAdapters::PostgreSQL::Table.class_eval do
             include Postgresql::Check::Table
           end

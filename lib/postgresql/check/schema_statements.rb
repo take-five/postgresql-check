@@ -12,10 +12,10 @@ module Postgresql
       # by +:name+ options in +options+ argument.
       #
       # @example
-      #   add_check :products, 'price > 0', :name => 'products_price_chk'
+      #   add_check :products, 'price > 0', name: 'products_price_check'
       #
       #   # Generates:
-      #   # ALTER TABLE products ADD CONSTRAINT products_price_chk CHECK (price > 0)
+      #   # ALTER TABLE products ADD CONSTRAINT products_price_check CHECK (price > 0)
       #
       # @note +:name+ option is mandatory.
       #
@@ -26,11 +26,11 @@ module Postgresql
       def add_check(table_name, condition, options)
         name = options.fetch(:name) { raise 'add_check, :name option required' }
 
-        sql = "ALTER TABLE #{quote_table_name(table_name)} " +
-            "ADD CONSTRAINT #{quote_column_name(name)} " +
-            "CHECK (#{condition})"
-
-        execute(sql)
+        execute <<-SQL
+          ALTER TABLE #{quote_table_name(table_name)}
+          ADD CONSTRAINT #{quote_column_name(name)}
+          CHECK (#{condition})
+        SQL
       end
 
       # Remove constraint with given name from table. Constraint name
@@ -48,38 +48,39 @@ module Postgresql
       def remove_check(table_name, options)
         name = options.fetch(:name) { raise 'remove_check, :name option required' }
 
-        sql = "ALTER TABLE #{quote_table_name(table_name)} " +
-            "DROP CONSTRAINT #{quote_column_name(name)}"
-
-        execute(sql)
+        execute <<-SQL
+          ALTER TABLE #{quote_table_name(table_name)}
+          DROP CONSTRAINT #{quote_column_name(name)}
+        SQL
       end
 
       # @api private
-      def create_table_with_checks(table_name, *args, &block)
+      def create_table_with_checks(table_name, *args)
         definition = nil
 
         create_table_without_checks(table_name, *args) do |td|
           definition = td # trick to get the definition
-          block.call(td) unless block.nil?
+          yield td if block_given?
         end
 
         definition.checks.each do |condition, options|
-          add_check(table_name, condition, options)
+          add_check table_name, condition, options
         end
       end
 
       # @api private
       def checks(table_name)
-        checks_info = select_all %{
+        checks_info = select_all <<-SQL
           SELECT c.conname, c.consrc
           FROM pg_constraint c
-          JOIN pg_class t ON c.conrelid = t.oid
+          INNER JOIN pg_class t
+            ON c.conrelid = t.oid
           WHERE c.contype = 'c'
             AND t.relname = '#{table_name}'
-        }
+        SQL
 
         checks_info.map do |row|
-          Constraint.new(table_name, row['conname'], row['consrc'])
+          Constraint.new table_name, row['conname'], row['consrc']
         end
       end
     end

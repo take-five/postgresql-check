@@ -31,8 +31,8 @@ Or install it yourself as:
 
 Two new methods are introduced to migrations:
 
-* `add_check(table_name, condition, name: constraint_name)`
-* `remove_check(table_name, name: constraint_name)`
+* `add_check table_name, condition, name: constraint_name`
+* `remove_check table_name, name: constraint_name`
 
 Given the following model:
 
