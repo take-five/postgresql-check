@@ -6,7 +6,7 @@ module Postgresql
       # Example:
       #   create_table :goods do |t|
       #     t.float :price
-      #     t.check 'price > 0', :name => 'price_gt_0'
+      #     t.check 'price > 0', :name => 'goods_price_gt_0_check'
       #   end
       def check(condition, options)
         checks << [condition, options]
