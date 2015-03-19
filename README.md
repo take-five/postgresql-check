@@ -31,21 +31,21 @@ Or install it yourself as:
 
 Two new methods are introduced to migrations:
 
-* `add_check(table_name, condition, :name => constraint_name)`
-* `remove_check(table_name, :name => constraint_name)`
+* `add_check(table_name, condition, name: constraint_name)`
+* `remove_check(table_name, name: constraint_name)`
 
 Given the following model:
 
 ```ruby
 class Product < ActiveRecord::Base
-  validates :price, :numericality => {:greater_than => 0}
+  validates :price, numericality: { greater_than: 0 }
 end
 ```
 
 You can add a check constraint in your migration:
 
 ```ruby
-add_check :products, 'price > 0', :name => 'products_price_check'
+add_check :products, 'price > 0', name: 'products_price_check'
 ```
 
 The code above generates following SQL:
@@ -59,7 +59,7 @@ ALTER TABLE "products" ADD CONSTRAINT "products_price_check" (price > 0)
 To remove constraint use `remove_check` method:
 
 ```ruby
-remove_check :products, :name => 'products_price_check'
+remove_check :products, name: 'products_price_check'
 ```
 
 ## Change Table methods
@@ -68,8 +68,8 @@ This gem adds extra methods to `create_table` and `change_table`:
 
 ```ruby
 create_table :products do |t|
-  t.decimal :price, :null => false
-  t.check 'price > 0', :name => 'products_price_check'
+  t.decimal :price, null: false
+  t.check 'price > 0', name: 'products_price_check'
 end
 ```
 
@@ -77,7 +77,7 @@ Remove a check constraint:
 
 ```ruby
 change_table :products do |t|
-  t.remove_check :name => 'products_price_check'
+  t.remove_check name: 'products_price_check'
 end
 ```
 
@@ -89,7 +89,7 @@ end
 
 ## Contributing
 
-1. Fork it ( https://github.com/[my-github-username]/postgresql-check/fork )
+1. Fork it ( https://github.com/take-five/postgresql-check/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
