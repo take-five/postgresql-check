@@ -19,13 +19,14 @@ module Postgresql
             dump_check_constraint check
           end
 
-          stream.puts definitions.join('\n')
+          stream.puts definitions.join("\n")
+          stream.puts "\n"
         end
       end
 
       def dump_check_constraint(check)
-        <<-RUBY
-  add_check '#{remove_prefix_and_suffix(check.table_name)}', '#{check.condition}', name: '#{check.name}'
+        <<-RUBY.chomp
+  add_check "#{remove_prefix_and_suffix(check.table_name)}", "#{check.condition}", name: "#{check.name}"
         RUBY
       end
     end
