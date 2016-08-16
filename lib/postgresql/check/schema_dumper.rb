@@ -4,7 +4,8 @@ module Postgresql
       extend ActiveSupport::Concern
 
       included do
-        alias_method_chain :table, :checks
+        alias_method :table_without_checks, :table
+        alias_method :table, :table_with_checks
       end
 
       def table_with_checks(table, stream)

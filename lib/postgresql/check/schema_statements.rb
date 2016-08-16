@@ -4,7 +4,8 @@ module Postgresql
       extend ActiveSupport::Concern
 
       included do
-        alias_method_chain :create_table, :checks
+        alias_method :create_table_without_checks, :create_table
+        alias_method :create_table, :create_table_with_checks
       end
 
       # Add a new Check constraint to table with given +table_name+
