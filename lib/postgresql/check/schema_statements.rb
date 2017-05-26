@@ -72,7 +72,7 @@ module Postgresql
       # @api private
       def checks(table_name)
         checks_info = select_all <<-SQL
-          SELECT c.conname, c.consrc
+          SELECT DISTINCT c.conname, c.consrc
           FROM pg_constraint c
           INNER JOIN pg_class t
             ON c.conrelid = t.oid

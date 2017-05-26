@@ -27,7 +27,7 @@ module Postgresql
 
       def dump_check_constraint(check)
         <<-RUBY.chomp
-  add_check "#{remove_prefix_and_suffix(check.table_name)}", "#{check.condition}", name: "#{check.name}"
+  add_check "#{remove_prefix_and_suffix(check.table_name)}", "#{check.condition.gsub('"', '\"')}", name: "#{check.name}"
         RUBY
       end
     end
