@@ -72,7 +72,7 @@ module Postgresql
       # @api private
       def checks(table_name)
         checks_info = select_all <<-SQL
-          SELECT DISTINCT c.conname, c.consrc
+          SELECT DISTINCT c.conname, pg_get_expr(c.conbin, c.conrelid) check_expr
           FROM pg_constraint c
           INNER JOIN pg_class t
             ON c.conrelid = t.oid
@@ -81,7 +81,7 @@ module Postgresql
         SQL
 
         checks_info.map do |row|
-          Constraint.new table_name, row['conname'], row['consrc']
+          Constraint.new table_name, row['conname'], row['check_expr']
         end
       end
     end
